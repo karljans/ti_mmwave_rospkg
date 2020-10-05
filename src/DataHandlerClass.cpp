@@ -338,7 +338,6 @@ void *DataUARTHandler::sortIncomingData( void )
                 //get number of objects
                 memcpy( &mmwData.numObjOut, &currentBufp->at(currentDatap), sizeof(mmwData.numObjOut));
                 currentDatap += ( sizeof(mmwData.numObjOut) );
-            
                 //get xyzQFormat
                 memcpy( &mmwData.xyzQFormat, &currentBufp->at(currentDatap), sizeof(mmwData.xyzQFormat));
                 currentDatap += ( sizeof(mmwData.xyzQFormat) );
@@ -436,38 +435,49 @@ void *DataUARTHandler::sortIncomingData( void )
                     radarscan.intensity = temp[5];
                 } else { // SDK version is 3.x+
                     //get object x-coordinate (meters)
-                    memcpy( &mmwData.newObjOut.x, &currentBufp->at(currentDatap), sizeof(mmwData.newObjOut.x));
-                    currentDatap += ( sizeof(mmwData.newObjOut.x) );
+                    memcpy( &mmwData.objOut_cartes.x, &currentBufp->at(currentDatap), sizeof(mmwData.objOut_cartes.x));
+                    currentDatap += ( sizeof(mmwData.objOut_cartes.x) );
                 
                     //get object y-coordinate (meters)
-                    memcpy( &mmwData.newObjOut.y, &currentBufp->at(currentDatap), sizeof(mmwData.newObjOut.y));
-                    currentDatap += ( sizeof(mmwData.newObjOut.y) );
+                    memcpy( &mmwData.objOut_cartes.y, &currentBufp->at(currentDatap), sizeof(mmwData.objOut_cartes.y));
+                    currentDatap += ( sizeof(mmwData.objOut_cartes.y) );
                 
                     //get object z-coordinate (meters)
-                    memcpy( &mmwData.newObjOut.z, &currentBufp->at(currentDatap), sizeof(mmwData.newObjOut.z));
-                    currentDatap += ( sizeof(mmwData.newObjOut.z) );
+                    memcpy( &mmwData.objOut_cartes.z, &currentBufp->at(currentDatap), sizeof(mmwData.objOut_cartes.z));
+                    currentDatap += ( sizeof(mmwData.objOut_cartes.z) );
                 
                     //get object velocity (m/s)
-                    memcpy( &mmwData.newObjOut.velocity, &currentBufp->at(currentDatap), sizeof(mmwData.newObjOut.velocity));
-                    currentDatap += ( sizeof(mmwData.newObjOut.velocity) );
+                    memcpy( &mmwData.objOut_cartes.velocity, &currentBufp->at(currentDatap), sizeof(mmwData.objOut_cartes.velocity));
+                    currentDatap += ( sizeof(mmwData.objOut_cartes.velocity) );
+
+                    //get object range (m)
+                     //memcpy( &mmwData.objOut_spher.range, &currentBufp->at(currentDatap), sizeof(mmwData.objOut_spher.range));
+                     //currentDatap += ( sizeof(mmwData.objOut_spher.range) );
+
+                    // memcpy( &mmwData.detList.rangeIdx, &currentBufp->at(currentDatap), sizeof(mmwData.detList.rangeIdx));
+                    // currentDatap += ( sizeof(mmwData.detList.rangeIdx) );
+
 
                     // Map mmWave sensor coordinates to ROS coordinate system
-                    RScan->points[i].x = mmwData.newObjOut.y;   // ROS standard coordinate system X-axis is forward which is the mmWave sensor Y-axis
-                    RScan->points[i].y = -mmwData.newObjOut.x;  // ROS standard coordinate system Y-axis is left which is the mmWave sensor -(X-axis)
-                    RScan->points[i].z = mmwData.newObjOut.z;   // ROS standard coordinate system Z-axis is up which is the same as mmWave sensor Z-axis
+                    RScan->points[i].x = mmwData.objOut_cartes.y;   // ROS standard coordinate system X-axis is forward which is the mmWave sensor Y-axis
+                    RScan->points[i].y = -mmwData.objOut_cartes.x;  // ROS standard coordinate system Y-axis is left which is the mmWave sensor -(X-axis)
+                    RScan->points[i].z = mmwData.objOut_cartes.z;   // ROS standard coordinate system Z-axis is up which is the same as mmWave sensor Z-axis
 
                     radarscan.header.frame_id = frameID;
                     radarscan.header.stamp = ros::Time::now();
 
                     radarscan.point_id = i;
-                    radarscan.x = mmwData.newObjOut.y;
-                    radarscan.y = -mmwData.newObjOut.x;
-                    radarscan.z = mmwData.newObjOut.z;
-                    // radarscan.range = temp[4];
-                    radarscan.velocity = mmwData.newObjOut.velocity;
-                    // radarscan.doppler_bin = tmp;
+                    radarscan.x = mmwData.objOut_cartes.y;
+                    radarscan.y = -mmwData.objOut_cartes.x;
+                    radarscan.z = mmwData.objOut_cartes.z;
+                    radarscan.velocity = mmwData.objOut_cartes.velocity;
+
+                    radarscan.range = sqrt(radarscan.x*radarscan.x +
+                            radarscan.y*radarscan.y + radarscan.z*radarscan.z);
+                    // radarscan.doppler_bin = mmwData.detList.dopplerIdx;
                     // radarscan.bearing = temp[6];
-                    // radarscan.intensity = temp[5];
+
+                    radarscan.intensity = 10 * log10(mmwData.sideInfo.snr + 1);
                     
 
                     // For SDK 3.x, intensity is replaced by snr in sideInfo and is parsed in the READ_SIDE_INFO code
