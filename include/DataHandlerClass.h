@@ -8,7 +8,6 @@
 #include <cstdlib>
 #include <boost/shared_ptr.hpp>
 #include "ros/ros.h"
-#include "sensor_msgs/PointCloud2.h"
 #include <pthread.h>
 #include <algorithm>
 #include "pcl_ros/point_cloud.h"
