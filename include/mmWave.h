@@ -208,7 +208,7 @@ MmwDemo_DetectedObj objOut; // only used for SDK 1.x and 2.x
 DPIF_PointCloudCartesian_t objOut_cartes; // used for SDK 3.x   (x, y, z, velocity)
 DPIF_PointCloudSideInfo_t sideInfo; // used for SDK 3.x
 // DPIF_PointCloudSpherical_t objOut_spher;   // used for SDK 3.x (range, azimuthAngle, elevAngle, velocity)
-// DPIF_CFARDetList_t detList;
+ DPIF_CFARDetList_t detList;
 
 };
 

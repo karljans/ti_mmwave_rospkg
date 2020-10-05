@@ -474,8 +474,8 @@ void *DataUARTHandler::sortIncomingData( void )
 
                     radarscan.range = sqrt(radarscan.x*radarscan.x +
                             radarscan.y*radarscan.y + radarscan.z*radarscan.z);
-                    // radarscan.doppler_bin = mmwData.detList.dopplerIdx;
-                    // radarscan.bearing = temp[6];
+                    radarscan.doppler_bin = (uint16_t)( mmwData.detList.dopplerIdx + nd / 2);
+                    radarscan.bearing = std::atan2(-mmwData.objOut_cartes.x, mmwData.objOut_cartes.y) / M_PI * 180;
 
                     radarscan.intensity = 10 * log10(mmwData.sideInfo.snr + 1);
                     
