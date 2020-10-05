@@ -477,7 +477,7 @@ void *DataUARTHandler::sortIncomingData( void )
                     radarscan.doppler_bin = (uint16_t)( mmwData.detList.dopplerIdx + nd / 2);
                     radarscan.bearing = std::atan2(-mmwData.objOut_cartes.x, mmwData.objOut_cartes.y) / M_PI * 180;
 
-                    radarscan.intensity = 10 * log10(mmwData.sideInfo.snr + 1);
+                    radarscan.intensity = (float) mmwData.sideInfo.snr / 10.0;
                     
 
                     // For SDK 3.x, intensity is replaced by snr in sideInfo and is parsed in the READ_SIDE_INFO code
