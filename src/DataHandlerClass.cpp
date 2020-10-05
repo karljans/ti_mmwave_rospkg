@@ -270,8 +270,8 @@ void *DataUARTHandler::sortIncomingData( void )
     float maxElevationAngleRatioSquared;
     float maxAzimuthAngleRatio;
     
-    boost::shared_ptr<pcl::PointCloud<pcl::PointXYZI>> RScan(
-                                      new pcl::PointCloud<pcl::PointXYZI>);
+    boost::shared_ptr<pcl::PointCloud<radar_pcl::PointXYZIVR>> RScan(
+                                  new pcl::PointCloud<radar_pcl::PointXYZIVR>);
     ti_mmwave_rospkg::RadarScan radarscan;
 
     //wait for first packet to arrive
@@ -396,8 +396,7 @@ void *DataUARTHandler::sortIncomingData( void )
                 memcpy( &mmwData.xyzQFormat,
                     &currentBufp->at(currentDatap),
                     sizeof(mmwData.xyzQFormat));
-                currentDatap += ( sizeof(mmwData.x
-                    yzQFormat) );
+                currentDatap += ( sizeof(mmwData.xyzQFormat) );
             }
             else  // SDK version is at least 3.x
             {
@@ -502,6 +501,8 @@ void *DataUARTHandler::sortIncomingData( void )
                     // the same as mmWave sensor Z-axis
                     RScan->points[i].z = temp[2];
                     RScan->points[i].intensity = temp[5];
+                    RScan->points[i].velocity = temp[7];
+                    RScan->points[i].range = temp[4];
                     
                     radarscan.header.frame_id = frameID;
                     radarscan.header.stamp = ros::Time::now();
@@ -551,6 +552,10 @@ void *DataUARTHandler::sortIncomingData( void )
                     // ROS standard coordinate system Z-axis is up which is
                     // the same as mmWave sensor Z-axis
                     RScan->points[i].z = mmwData.objOut_cartes.z;
+
+                    RScan->points[i].velocity = mmwData.objOut_cartes.velocity;
+                    RScan->points[i].range = sqrt(radarscan.x*radarscan.x +
+                        radarscan.y*radarscan.y + radarscan.z*radarscan.z);
 
                     radarscan.header.frame_id = frameID;
                     radarscan.header.stamp = ros::Time::now();
@@ -618,8 +623,7 @@ void *DataUARTHandler::sortIncomingData( void )
 
                     // Use snr for "intensity" field
                     // (divide by 10 since unit of snr is 0.1dB)
-                    RScan->points[i].intensity =
-                        (float) mmwData.sideInfo.snr / 10.0;
+                    RScan->points[i].intensity = mmwData.sideInfo.snr / 10.0;
                 }
             }
             else  // else just skip side info section if we have not already

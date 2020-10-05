@@ -3,6 +3,7 @@
 
 #include <ti_mmwave_rospkg/RadarScan.h>
 #include "mmWave.h"
+#include "point_types.h"
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -25,7 +26,8 @@ class DataUARTHandler{
 public:
     
     /*Constructor*/
-   //void DataUARTHandler(ros::NodeHandle* nh) : currentBufp(&pingPongBuffers[0]) , nextBufp(&pingPongBuffers[1]) {}
+   //void DataUARTHandler(ros::NodeHandle* nh) :
+   // currentBufp(&pingPongBuffers[0]) , nextBufp(&pingPongBuffers[1]) {}
     DataUARTHandler(ros::NodeHandle* nh);
     
     void setFrameID(char* myFrameID);
