@@ -2,3 +2,4 @@
 src/.vscode
 cfg/archive
 launch/archive
+cmake-build-release
