@@ -265,7 +265,7 @@ void *DataUARTHandler::sortIncomingData( void )
     uint32_t headerSize;
     unsigned int currentDatap = 0;
     SorterState sorterState = READ_HEADER;
-    int i = 0, tlvCount = 0, offset = 0;
+    int i = 0, tlvCount = 0;
     int j = 0;
     float maxElevationAngleRatioSquared;
     float maxAzimuthAngleRatio;
@@ -383,7 +383,6 @@ void *DataUARTHandler::sortIncomingData( void )
             // CHECK_TLV_TYPE code has already read tlvType and tlvLen
 
             i = 0;
-            offset = 0;
 
             if (((mmwData.header.version >> 24) & 0xFF) < 3) // SDK version is older than 3.x
             {
@@ -469,7 +468,7 @@ void *DataUARTHandler::sortIncomingData( void )
                         sizeof(mmwData.objOut.z));
                     currentDatap += ( sizeof(mmwData.objOut.z) );
                     
-                    float temp[7];
+                    float temp[8];
                     
                     temp[0] = (float) mmwData.objOut.x;
                     temp[1] = (float) mmwData.objOut.y;
