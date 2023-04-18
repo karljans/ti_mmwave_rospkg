@@ -16,11 +16,18 @@ int main(int argc, char **argv) {
     } else 
         ROS_INFO("mmWaveQuickConfig: Configuring mmWave device using config file: %s", argv[1]);
     
-    ros::ServiceClient client = nh.serviceClient<ti_mmwave_rospkg::mmWaveCLI>("/mmWaveCLI");
+    ros::ServiceClient client = nh.serviceClient<ti_mmwave_rospkg::mmWaveCLI>("mmWaveCLI");
     std::ifstream myParams;
     ti_mmwave_rospkg::ParameterParser parser;
     //wait for service to become available
-    ros::service::waitForService("/mmWaveCLI", 10000); 
+
+    std::string ns = ros::this_node::getNamespace();
+    if (ns != "/")
+    {
+        ns = ns + "/";
+    }
+
+    ros::service::waitForService(ns + "mmWaveCLI", 10000); 
     
     //wait 0.5 secs to avoid multi-sensor conflicts
     ros::Duration(0.5).sleep();

@@ -19,7 +19,13 @@ void mmWaveCommSrv::onInit()
     ROS_INFO("mmWaveCommSrv: command_port = %s", mySerialPort.c_str());
     ROS_INFO("mmWaveCommSrv: command_rate = %d", myBaudRate);
     
-    commSrv = private_nh.advertiseService("/mmWaveCLI", &mmWaveCommSrv::commSrv_cb, this);
+    std::string ns = ros::this_node::getNamespace();
+    if (ns != "/")
+    {
+        ns = ns + "/";
+    }
+
+    commSrv = private_nh.advertiseService(ns + "mmWaveCLI", &mmWaveCommSrv::commSrv_cb, this);
     
     NODELET_DEBUG("mmWaveCommsrv: Finished onInit function");
 }
